@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  database:
+    container_name: mongo-server
+    image: mongo
+    restart: always
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=login
+      - MONGO_INITDB_ROOT_PASSWORD=senha
+    volumes:
+    - type: volume
+      source: db-volume
+      target: /data/db
+
+  app:
+    container_name: app
+    build: .
+    depends_on:
+      - database
+    environment: 
+      - DATABASE_USER=login
+      - DATABASE_PASSWORD=senha
+      - DATABASE_HOST_NAME=mongo-server
+      - DATABASE_PORT=27017
+      - DATABASE_NAME=mydata
+      - WAIT_HOSTS=database:27017
+    ports:
+      - 8080:8080
+volumes:
+  db-volume:
